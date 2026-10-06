@@ -427,6 +427,7 @@
             <button class="btn btn-test" onclick="setMode('test')">Ostrý TEST</button>
         </div>
         <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()">🌙 Tmavý mód</button>
+	<button class="theme-btn" id="sound-toggle" onclick="toggleSound()">🔊 Zvuky zapnuté</button>
     </div>
     <div class="sidebar-content">
         <div class="nav-grid" id="nav-grid"></div>
@@ -982,6 +983,25 @@ function loadQ(index) {
 const sfxJojo = new Audio('jojo.ogg');
 const sfxNene = new Audio('nene.ogg');
 
+let soundOn = localStorage.getItem('sound') !== 'off';
+
+function updateSoundBtn() {
+    const btn = document.getElementById('sound-toggle');
+    if (btn) btn.innerText = soundOn ? '🔊 Zvuky zapnuté' : '🔇 Zvuky vypnuté';
+}
+
+function toggleSound() {
+    soundOn = !soundOn;
+    localStorage.setItem('sound', soundOn ? 'on' : 'off');
+    if (!soundOn) {
+        sfxJojo.pause();
+        sfxNene.pause();
+    }
+    updateSoundBtn();
+}
+
+updateSoundBtn();
+
 (function() {
     const colors = ['#f43f5e','#f97316','#facc15','#4ade80','#38bdf8','#a78bfa','#fb7185'];
     const container = document.getElementById('confetti-container');
@@ -1079,7 +1099,7 @@ function selectAnswer(qIndex, optIndex) {
             streak = 0;
         }
         // Zvuk jen na desktopu
-        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        if (soundOn && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
             const sfx = isCorrect ? sfxJojo : sfxNene;
             sfx.currentTime = 0;
             sfx.play();
